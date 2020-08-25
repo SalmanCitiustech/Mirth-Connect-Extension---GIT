@@ -1,0 +1,24 @@
+<pluginMetaData path="gitplugin">
+	<name>Git Plugin</name>
+	<author>Mirth Corporation</author>
+	<pluginVersion>@mirthversion</pluginVersion>
+	<mirthVersion>3.5.1</mirthVersion>
+	<url>http://www.mirthcorp.com</url>
+	<description>This plugin allows you to view the Git Plugin in the Mirth Connect Administrator.</description>
+	<serverClasses>
+		<string>com.mirth.connect.plugins.gitplugin.GitPluginProvider</string>
+	</serverClasses>
+	<clientClasses>
+		<string weight="100">com.mirth.connect.plugins.gitplugin.GitPluginClientChannel</string>
+		<string weight="100">com.mirth.connect.plugins.gitplugin.GitConfigClient</string>
+	</clientClasses>
+	<library type="CLIENT" path="gitplugin-client.jar" />
+	<library type="SERVER" path="gitplugin-server.jar" />
+	<library type="SHARED" path="gitplugin-shared.jar" />
+	<library type="CLIENT" path="lib/xmleditorkit.jar" />
+	<library type="CLIENT" path="lib/xmlunit-1.2.jar" />
+	<library type="SHARED" path="lib/org-eclipse-jgit.jar" />
+	<library type="SERVER" path="lib/java-diff-1.0.0.jar" />
+	<apiProvider type="SERVLET_INTERFACE" name="com.mirth.connect.plugins.gitplugin.GitPluginChannelServletInterface"/>
+	<apiProvider type="SERVER_CLASS" name="com.mirth.connect.plugins.gitplugin.GitPluginChannelServlet"/>
+</pluginMetaData>
