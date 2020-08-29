@@ -53,11 +53,11 @@ public class GitClientUtil {
 	 * @param channelName
 	 * @param channelId
 	 * @param prop           This is properties for Git Plugin
-	 * @param commitMessage  This is user Message to add while committing file to
-	 *                       Git.
+	 * @param commitMessage  This is user Message to add while committing file to Git.
+	 * @throws SAXException 
 	 */
 	public static void cloneAndAddFile(String channelXMLData, String channelName, String channelId, Properties prop,
-			String commitMessage) throws IOException, InterruptedException {
+			String commitMessage) throws IOException, InterruptedException, SAXException {
 		boolean isGitEnable = Boolean.parseBoolean(prop.getProperty("git_enable"));
 		if (isGitEnable) {
 			String originUrl = prop.getProperty("git_url");

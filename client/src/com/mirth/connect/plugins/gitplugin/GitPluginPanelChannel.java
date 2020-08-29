@@ -67,6 +67,7 @@ import xmleditorkit.XMLEditorKit;
  */
 public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 
+	private static final long serialVersionUID = 1051204806015656588L;
 	private Frame parent;
 	private Properties properties;
 	private DefaultTableModel model;
@@ -196,7 +197,7 @@ public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 
 	/* Create or Modify the channel xml onto the Git Repository. */
 	private String setChannelXMLData(String channelXMLData, String channelName, String channelId, String commitMessage)
-			throws IOException, InterruptedException {
+			throws IOException, InterruptedException, SAXException {
 		GitClientUtil.cloneAndAddFile(channelXMLData, channelName, channelId, properties, commitMessage);
 		return "xml changes commited to git";
 	}

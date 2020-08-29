@@ -18,7 +18,7 @@ public class XmlUtility {
 
 	private static Logger logger = Logger.getLogger(XmlUtility.class);
 	
-	public static String readXmlFileData(Path directory, String channelName, String channelId) {
+	public static String readXmlFileData(Path directory, String channelName, String channelId) throws IOException, SAXException {
 		List<XmlElementMapper> xmlDataList = new ArrayList<>();
 		String fileName = null;
 		File fXmlFile = new File(directory.toString());
@@ -28,6 +28,32 @@ public class XmlUtility {
 			XmlElementMapper elementMapper = new XmlElementMapper();
 			if (pathname.substring(pathname.length() - 4).equals(GitConstants.FILEFORMAT_XML)) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				
+				String FEATURE = null;
+				try {
+				    FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+				    dbFactory.setFeature(FEATURE, true);
+				   
+				    FEATURE = "http://xml.org/sax/features/external-general-entities";
+				    dbFactory.setFeature(FEATURE, false);
+
+				    FEATURE = "http://xml.org/sax/features/external-parameter-entities";
+				    dbFactory.setFeature(FEATURE, false);
+
+				    // Disable external DTDs as well
+				    FEATURE = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+				    dbFactory.setFeature(FEATURE, false);
+
+				    // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+				    dbFactory.setXIncludeAware(false);
+				    dbFactory.setExpandEntityReferences(false);
+
+				} catch (ParserConfigurationException e) {
+				    // This should catch a failed setFeature feature
+				    logger.info("ParserConfigurationException was thrown. The feature '" + FEATURE
+				    + "' is probably not supported by your XML processor.");
+				}
+				
 				DocumentBuilder dBuilder;
 				Document doc = null;
 				try {
