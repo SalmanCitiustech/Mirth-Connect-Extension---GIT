@@ -6,12 +6,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XmlUtility {
@@ -28,37 +30,14 @@ public class XmlUtility {
 			XmlElementMapper elementMapper = new XmlElementMapper();
 			if (pathname.substring(pathname.length() - 4).equals(GitConstants.FILEFORMAT_XML)) {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				
-				String FEATURE = null;
-				try {
-				    FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
-				    dbFactory.setFeature(FEATURE, true);
-				   
-				    FEATURE = "http://xml.org/sax/features/external-general-entities";
-				    dbFactory.setFeature(FEATURE, false);
-
-				    FEATURE = "http://xml.org/sax/features/external-parameter-entities";
-				    dbFactory.setFeature(FEATURE, false);
-
-				    // Disable external DTDs as well
-				    FEATURE = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
-				    dbFactory.setFeature(FEATURE, false);
-
-				    // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				    dbFactory.setXIncludeAware(false);
-				    dbFactory.setExpandEntityReferences(false);
-
-				} catch (ParserConfigurationException e) {
-				    // This should catch a failed setFeature feature
-				    logger.info("ParserConfigurationException was thrown. The feature '" + FEATURE
-				    + "' is probably not supported by your XML processor.");
-				}
+				dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
+				dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
 				
 				DocumentBuilder dBuilder;
 				Document doc = null;
 				try {
 					dBuilder = dbFactory.newDocumentBuilder();
-					doc = dBuilder.parse(directory + GitConstants.SEP_PATH_DBS + pathname);
+					doc = dBuilder.parse(new InputSource(directory + GitConstants.SEP_PATH_DBS + pathname));
 				} catch (ParserConfigurationException e) {
 					logger.error(e);
 				} catch (SAXException e) {

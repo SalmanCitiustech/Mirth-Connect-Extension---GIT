@@ -504,13 +504,14 @@ public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 
 							List<String> versionData = getCompareFileData(commitIds, channelId);
 							if (isDefaultCompareViewSelected) {
-
-								createComparePannel(versionData.get(0), versionData.get(1));
-
+								if (versionData.get(0) != null && versionData.get(1) != null)
+									createComparePannel(versionData.get(0), versionData.get(1));
 							} else {
 								try {
 									String comparatorPath = (String) properties.get("compare_tool_path");
-									openCompareTool(commitIds, versionData, comparatorPath);
+									if (comparatorPath != null && versionData != null && commitIds != null) {
+										openCompareTool(commitIds, versionData, comparatorPath);
+									}
 								} catch (IOException e1) {
 									logger.error(GitConstants.GIT_PLUGIN + "Error in opening compare tool : " + e1);
 

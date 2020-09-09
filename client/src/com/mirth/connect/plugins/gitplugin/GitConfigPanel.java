@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,6 +41,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class GitConfigPanel extends AbstractSettingsPanel implements ActionListener {
 
+	private static final long serialVersionUID = 3055102412930809343L;
 	private SettingsPanelPlugin plugin = null;
 	private ObjectXMLSerializer serializer = ObjectXMLSerializer.getInstance();
 	private AtomicBoolean refreshing = new AtomicBoolean(false);
@@ -62,6 +64,12 @@ public class GitConfigPanel extends AbstractSettingsPanel implements ActionListe
 
 	@Override
 	public void doRefresh() {
+		File gitConfigFile = new File(GitClientUtil.getGitConfigFileName());
+		boolean exists = gitConfigFile.exists();
+		if(!exists) {
+			noEnabledRadio.setSelected(true);
+			disableFields();
+		}
 		yesEnabledRadio.addActionListener(this);
 		noEnabledRadio.addActionListener(this);
 		prodEnvYesRadio.addActionListener(this);
@@ -173,13 +181,14 @@ public class GitConfigPanel extends AbstractSettingsPanel implements ActionListe
 					disableFields();
 				}
 				urlText.setText(properties.getProperty("git_url"));
-				urlText.setSize(new Dimension(250, 20));
 				gitLocalDirPathText.setText(properties.getProperty("git_local_path"));
 				comparatorDirPathText.setText(properties.getProperty("compare_tool_path"));
 				if (Boolean.parseBoolean(properties.getProperty("git_Default_Compare_Enabled"))) {
 					defaultCompareYesRadio.setSelected(true);
 					defaultCompareYesRadioSelected();
 				} else {
+					defaultCompareNoRadio.setSelected(true);
+					defaultComapreNoRadioSelected();
 					fileEditorDirPathText.setText(properties.getProperty("file_editor_path"));
 				}
 
@@ -336,6 +345,7 @@ public class GitConfigPanel extends AbstractSettingsPanel implements ActionListe
 		urlLabel = new JLabel(GitConstants.url_Label);
 		urlText = new MirthTextField();
 		urlText.setName("urlText");
+		urlText.setSize(new Dimension(250, 20));
 
 		gitLocalDirLabel = new JLabel(GitConstants.git_Local_Dir_Label);
 		gitLocalDirPathText = new MirthTextField();
