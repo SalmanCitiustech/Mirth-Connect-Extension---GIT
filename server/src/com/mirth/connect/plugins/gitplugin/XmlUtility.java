@@ -29,7 +29,7 @@ public class XmlUtility {
 		for (String pathname : pathnames) {
 			XmlElementMapper elementMapper = new XmlElementMapper();
 			if (pathname.substring(pathname.length() - 4).equals(GitConstants.FILEFORMAT_XML)) {
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance("com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl", null);
 				dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
 				dbFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
 				
