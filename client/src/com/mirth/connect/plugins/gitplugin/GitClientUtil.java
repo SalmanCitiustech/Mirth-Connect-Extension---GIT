@@ -73,10 +73,11 @@ public class GitClientUtil {
 
 			// Create or Replace file with new Data in given directory
 			String fileName = XmlUtility.readXmlFileData(directory, channelName, channelId);
-			FileWriter fileWriter = new FileWriter(fileName);
-			fileWriter.write(channelXMLData);
-			fileWriter.close();
-			Files.write(Paths.get(fileName), channelXMLData.getBytes(), StandardOpenOption.CREATE);
+			try (FileWriter fileWriter = new FileWriter(fileName);) {
+				fileWriter.write(channelXMLData);
+				fileWriter.close();
+				Files.write(Paths.get(fileName), channelXMLData.getBytes(), StandardOpenOption.CREATE);
+			}
 
 			// Commit file and Push it in Git Repository
 			gitStage(directory);
@@ -243,18 +244,25 @@ public class GitClientUtil {
 	public static Properties readGitProperties(String fileName) throws Exception {
 		FileInputStream fis = null;
 		Properties prop = null;
+		FileOutputStream fo = null;
 		try {
-			File file = new File(fileName);
-			if (!file.exists()) {
-				FileOutputStream fo = new FileOutputStream(file);
+			try {
+				File file = new File(fileName);
+				if (!file.exists()) {
+					try {
+					fo = new FileOutputStream(file);
+					} finally {
+						if (fo != null) fo.close();
+					}
+				}
+				fis = new FileInputStream(file);
+				prop = new Properties();
+				prop.load(fis);
+			} finally {
+				if (fis != null) fis.close();
 			}
-			fis = new FileInputStream(file);
-			prop = new Properties();
-			prop.load(fis);
 		} catch (Exception e) {
 			throw new Exception(e);
-		} finally {
-			fis.close();
 		}
 		return prop;
 	}
@@ -298,7 +306,7 @@ public class GitClientUtil {
 			if (node.contains("at null to")) {
 				node = node.substring("at null to ".length());
 			}
-			if (highlights1.containsKey(node) && highlights1.containsKey(node)) {
+			if (highlights1.containsKey(node) && highlights2.containsKey(node)) {
 				valueList1 = highlights1.get(node);
 				valueList1.add(difference.getControlNodeDetail().getValue());
 

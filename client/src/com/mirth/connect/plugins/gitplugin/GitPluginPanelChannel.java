@@ -503,21 +503,23 @@ public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 							}
 
 							List<String> versionData = getCompareFileData(commitIds, channelId);
-							if (isDefaultCompareViewSelected) {
-								if (versionData.get(0) != null && versionData.get(1) != null)
-									createComparePannel(versionData.get(0), versionData.get(1));
-							} else {
-								try {
-									String comparatorPath = (String) properties.get("compare_tool_path");
-									if (comparatorPath != null && versionData != null && commitIds != null) {
-										openCompareTool(commitIds, versionData, comparatorPath);
-									}
-								} catch (IOException e1) {
-									logger.error(GitConstants.GIT_PLUGIN + "Error in opening compare tool : " + e1);
+							if (versionData != null) {
+								if (isDefaultCompareViewSelected) {
+									if (versionData.get(0) != null && versionData.get(1) != null)
+										createComparePannel(versionData.get(0), versionData.get(1));
+								} else {
+									try {
+										String comparatorPath = (String) properties.get("compare_tool_path");
+										if (comparatorPath != null && versionData != null && commitIds != null) {
+											openCompareTool(commitIds, versionData, comparatorPath);
+										}
+									} catch (IOException e1) {
+										logger.error(GitConstants.GIT_PLUGIN + "Error in opening compare tool : " + e1);
 
-								} catch (ClientException e1) {
-									// TODO Auto-generated catch block
-									logger.error(GitConstants.GIT_PLUGIN + "Error in opening compare tool : " + e1);
+									} catch (ClientException e1) {
+										// TODO Auto-generated catch block
+										logger.error(GitConstants.GIT_PLUGIN + "Error in opening compare tool : " + e1);
+									}
 								}
 							}
 						}
@@ -671,10 +673,11 @@ public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 			File file = new File(String.valueOf(fileName));
 			if (!file.exists()) {
 				String data = fileData;
-				FileWriter fileWriter = new FileWriter(fileName);
-				fileWriter.write(data);
-				fileWriter.close();
-				Files.write(Paths.get(fileName), data.getBytes(), StandardOpenOption.CREATE);
+				try (FileWriter fileWriter = new FileWriter(fileName);) {
+					fileWriter.write(data);
+					fileWriter.close();
+					Files.write(Paths.get(fileName), data.getBytes(), StandardOpenOption.CREATE);
+				}
 			}
 
 			// create a process to run the editor tool with given files
@@ -708,10 +711,11 @@ public class GitPluginPanelChannel extends AbstractChannelTabPanel {
 				fileNames.add(fileName);
 				if (!file.exists()) {
 					String data = fileData.get(i);
-					FileWriter fileWriter = new FileWriter(fileName);
-					fileWriter.write(data);
-					fileWriter.close();
-					Files.write(Paths.get(fileName), data.getBytes(), StandardOpenOption.CREATE);
+					try (FileWriter fileWriter = new FileWriter(fileName);) {
+						fileWriter.write(data);
+						fileWriter.close();
+						Files.write(Paths.get(fileName), data.getBytes(), StandardOpenOption.CREATE);
+					}
 				}
 			}
 
